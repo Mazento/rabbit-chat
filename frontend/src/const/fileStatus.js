@@ -1,0 +1,6 @@
+export const FILE_STATUS = {
+    INIT: "INIT",
+    PROCESSING: "PROCESSING",
+    SUCCESS: "SUCCESS",
+    FAILURE: "FAILURE"
+}
