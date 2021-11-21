@@ -1,10 +1,10 @@
-package dev.zentari.managerservice;
+package dev.zentari.discoveryserver;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ManagerServiceApplicationTests {
+class DiscoveryServerApplicationTests {
 
     @Test
     void contextLoads() {

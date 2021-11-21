@@ -13,7 +13,6 @@ import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.event.EventListener;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -21,9 +20,12 @@ import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -43,10 +45,13 @@ public class ChatUsersController {
     }
 
     @GetMapping("/checkUsername/{username}")
-    public ResponseEntity<Boolean> checkUsernameAvailability(@PathVariable String username) {
+    @ResponseBody
+    public Map<String, Boolean> checkUsernameAvailability(@PathVariable String username) {
         boolean userExists = chatUserService.existsByUsername(username);
+
         log.debug("user {} exists: {}", username, userExists);
-        return ResponseEntity.ok().body(!userExists);
+
+        return Collections.singletonMap("usernameAvailable", !userExists);
     }
 
     @MessageMapping("/getUsersList")

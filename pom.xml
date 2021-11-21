@@ -5,13 +5,13 @@
     <packaging>pom</packaging>
     <modules>
         <module>chat-node-service</module>
-        <module>manager-service</module>
+        <module>discovery-api</module>
         <module>file-service</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.5</version>
+        <version>2.6.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>dev.zentari</groupId>

@@ -114,7 +114,6 @@ public class MessagesController {
         )
     )
     public void onFileStatusUpdate(ChatMessageDTO message) {
-        log.debug("newFileStatusUpdate {}", message.getText());
         simpMessagingTemplate.convertAndSend("/queue/fileStatusUpdate", message);
     }
 

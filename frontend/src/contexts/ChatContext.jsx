@@ -1,9 +1,11 @@
-import React, { createContext, useRef, useState } from "react";
+import React, { createContext, useEffect, useRef, useState } from "react";
 import { Stomp } from '@stomp/stompjs';
 import { getChatSocketEndpoint } from "const/socketEndpoints";
 
 // const SOCKET_ENDPOINT = 'ws://localhost:3100/chat';
 // const SOCKET_ENDPOINT = process.env.CHAT_SOCKET_ENDPOINT || 'ws://localhost:8080/chat';
+
+const DISCOVERY_API_URL = "http://192.168.0.100:3002";
 
 const STATE_KEYS = {
     chatMessages: "chatMessages",
@@ -12,7 +14,8 @@ const STATE_KEYS = {
     isChatInitiated: "isChatInitiated",
     errors: "errors",
     pendingFileId: "pendingFileId",
-    chatServerURL: "chatServerURL",
+    chatServerUrlList: "chatServerUrlList",
+    chatServerCurrent: "chatServerCurrent",
 }
 
 export const ChatContext = createContext({});
@@ -36,13 +39,16 @@ export const ChatContextProvider = props => {
         [STATE_KEYS.isChatInitiated]: false,
         [STATE_KEYS.errors]: {},
         [STATE_KEYS.pendingFileId]: null,
-        [STATE_KEYS.chatServerURL]: null
+        [STATE_KEYS.pendingFileId]: null,
+        [STATE_KEYS.chatServerUrlList]: null,
+        [STATE_KEYS.chatServerCurrent]: null
     };
 
     const actions = {
         onJoinChat: (username) => handleJoinChat(username),
         onSendMessage: (message, username) => handleSendMessage(message, username),
-        onConnectToWebSocket: (chatServer) => handleConnectToWebSocket(chatServer),
+        onConnectToWebSocket: () => handleConnectToWebSocket(),
+        onSetChatServer: (chatServer) => handleSetChatServer(chatServer)
     };
 
     const [clientRef, setClientRef] = useState(null);
@@ -52,6 +58,20 @@ export const ChatContextProvider = props => {
 
     const updateState = (key, value) => {
         setState(prevState => ({...prevState, [key]: value}));
+    }
+
+    const getChatServers = () => {
+        console.log("getChatServers");
+
+        fetch(DISCOVERY_API_URL + "/api/chat",
+            {
+                method: "GET"
+            }
+        ).then((res) => {
+            res.json().then(list => {
+                updateState(STATE_KEYS.chatServerUrlList, list);
+            });
+        });
     }
 
     const handleJoinChat = username => {
@@ -155,15 +175,19 @@ export const ChatContextProvider = props => {
         }
     }
 
-    const handleConnectToWebSocket = chatServer => {
-        const endpoint = getChatSocketEndpoint(chatServer);
+    const handleSetChatServer = chatServer => {
+        updateState(STATE_KEYS.chatServerCurrent, chatServer);
+    }
+
+    const handleConnectToWebSocket = () => {
+        const endpoint = getChatSocketEndpoint(state.chatServerCurrent);
+
+        console.log("Connecting to " + state.chatServerCurrent);
 
         const socket = new WebSocket(endpoint);
         const client = Stomp.over(socket);
         setClientRef(client);
-        client.connect({username: "new awesome username"}, () => subscribe(client), setErrors);
-
-        updateState(STATE_KEYS.chatServerURL, endpoint);
+        client.connect({}, () => subscribe(client), setErrors);
     }
 
     const subscribe = client => {
@@ -183,6 +207,10 @@ export const ChatContextProvider = props => {
         console.error(errors);
         updateState(STATE_KEYS.errors, errors);
     }
+
+    useEffect(() => {
+        getChatServers();
+    }, []);
 
     return (
         <ChatContext.Provider value={{state, actions}}>

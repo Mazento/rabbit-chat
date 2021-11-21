@@ -7,6 +7,7 @@ import { ChatContext, ChatContextProvider } from "contexts/ChatContext";
 import ChatSendMessageContainer from "containers/ChatSendMessageContainer";
 import MessagesListContainer from "containers/MessagesListContainer";
 import UsersListContainer from "containers/UsersListContainer";
+import JoinDialog from "components/JoinDialog";
 
 const StyleWrapper = styled.div`
     display: flex;
@@ -54,7 +55,7 @@ const ChatComponent = () => {
 
     useEffect(() => {
         if (!chatState.isConnectionEstablished) {
-            chatActions.onConnectToWebSocket(userState.chatServer);
+            chatActions.onConnectToWebSocket();
         } else {
             chatActions.onJoinChat(userState.username);
         }
@@ -73,15 +74,22 @@ const ChatComponent = () => {
 }
 
 const ChatContainer = () => {
-    const {state: userState} = useContext(UserContext);
+    const {state: userState, actions: userActions} = useContext(UserContext);
+    const {state: chatState, actions: chatActions} = useContext(ChatContext);
+
+    if (!userState.username || !chatState.chatServerCurrent) {
+        return (
+            <JoinDialog
+                onSetUsername={userActions.onSetUsername}
+                onSetChatServer={chatActions.onSetChatServer}
+            />
+        );
+    }
 
     return (
         <>
-            {userState.username &&
-            <ChatContextProvider>
-                <ChatComponent />
-                <UsersListContainer />
-            </ChatContextProvider>}
+            <ChatComponent />
+            <UsersListContainer />
         </>
     );
 }

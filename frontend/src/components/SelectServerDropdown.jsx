@@ -2,13 +2,17 @@ import React from "react";
 import styled from "styled-components";
 
 import { InputLabel, MenuItem, Select } from "@mui/material";
-import { SOCKET_ENDPOINTS } from "const/socketEndpoints";
 
 const Wrapper = styled.div`
     margin-top: 2rem;
   
     display: flex;
     align-items: center;
+  
+    @media screen and (max-width: 768px) {
+      align-items: start;
+      flex-direction: column;
+    }
 `;
 
 const Label = styled(InputLabel)`
@@ -16,7 +20,7 @@ const Label = styled(InputLabel)`
 `;
 
 const SelectServerDropdown = (props) => {
-    const {selected, onChange} = props;
+    const {selected, chatServerUrlList, onChange} = props;
 
     return (
         <Wrapper>
@@ -26,7 +30,7 @@ const SelectServerDropdown = (props) => {
                 variant="standard"
                 onChange={onChange}
             >
-                {SOCKET_ENDPOINTS.map(port => (
+                {chatServerUrlList.map(port => (
                     <MenuItem
                         key={port}
                         value={port}

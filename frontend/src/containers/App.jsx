@@ -2,14 +2,17 @@ import React from 'react';
 import PageWrapper from "containers/PageWrapper";
 import { UserContextProvider } from "contexts/UserContext";
 import ChatContainer from "containers/ChatContainer";
+import { ChatContextProvider } from "contexts/ChatContext";
 
 const App = () => {
     return (
-        <UserContextProvider>
+        <ChatContextProvider>
+            <UserContextProvider>
                 <PageWrapper>
                     <ChatContainer />
                 </PageWrapper>
-        </UserContextProvider>
+            </UserContextProvider>
+        </ChatContextProvider>
     );
 }
 

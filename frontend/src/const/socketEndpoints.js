@@ -3,10 +3,10 @@ export const SOCKET_ENDPOINTS = [
     3101
 ];
 
-export const getChatSocketEndpoint = port => {
-    return 'ws://localhost:' + port + '/chat';
+export const getChatSocketEndpoint = server => {
+    return "ws://" + server + "/chat";
 }
 
-export const getChatApiEndpoint = port => {
-    return 'http://localhost:' + port;
+export const getChatApiEndpoint = server => {
+    return "http://" + server;
 }
