@@ -3,6 +3,7 @@ version: '3.8'
 services:
   rabbitmq:
     image: rabbitmq:3-management
+    restart: always
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -10,14 +11,59 @@ services:
   mysql:
       image: mysql:5.7
       restart: always
-      environment:
-        MYSQL_DATABASE: 'rabbit_chat'
-        MYSQL_USER: 'rchat_user'
-        MYSQL_PASSWORD: 'password'
-        MYSQL_ROOT_PASSWORD: 'password'
       ports:
         - '3306:3306'
       expose:
         - '3306'
       volumes:
         - "./.mysql-data/rabbit_chat:/var/lib/mysql"
+      environment:
+        MYSQL_DATABASE: 'rabbit_chat'
+        MYSQL_USER: 'rchat_user'
+        MYSQL_PASSWORD: 'password'
+        MYSQL_ROOT_PASSWORD: 'password'
+
+  file-service:
+    build: ../file-service
+    restart: always
+    ports:
+      - '3001:3001'
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+    links:
+      - rabbitmq
+
+  chat-node-service:
+    build: ../chat-node-service
+    ports:
+      - '3100-3200:3100-3200'
+    environment:
+      SERVER_PORT: 3100
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/rabbit_chat
+      EUREKA_URL: http://eureka:8761/eureka
+    links:
+      - rabbitmq
+      - mysql
+      - eureka
+
+  eureka:
+    build: ../discovery-server
+    ports:
+      - '8761:8761'
+
+  discovery-api:
+    build: ../discovery-api
+    ports:
+      - '3002:3002'
+    environment:
+      EUREKA_URL: http://eureka:8761/eureka
+    links:
+      - eureka
+
+  frontend:
+    build: ../frontend
+    ports:
+      - '3000:3000'

@@ -9,17 +9,17 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { CircularProgress, Slide } from "@mui/material";
 
 import SelectServerDropdown from "components/SelectServerDropdown";
-import { getChatApiEndpoint, SOCKET_ENDPOINTS } from "const/socketEndpoints";
 import { ChatContext } from "contexts/ChatContext";
+import { getChatApiEndpoint } from "utils/GetChatEndpoint";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
 const DialogForm = props => {
-    const {chatServerUrlList, onSetUsername, onSetChatServer} = props;
+    const {chatServerPortsList, onSetUsername, onSetChatServer} = props;
     const [username, setUsername] = useState('');
-    const [chatServer, setChatServer] = useState(chatServerUrlList[0]);
+    const [chatServer, setChatServer] = useState(chatServerPortsList[0]);
     const [usernameUnavailable, setUsernameUnavailable] = useState(false);
 
     const handleSetUsernameValue = event => {
@@ -35,7 +35,8 @@ const DialogForm = props => {
         if (!username || !chatServer)
             return;
 
-        const chatServerUrl = getChatApiEndpoint(chatServerUrlList[0]);
+        const chatServerUrl = getChatApiEndpoint(chatServerPortsList[0]);
+        console.log(chatServerUrl);
         fetch(chatServerUrl + "/checkUsername/" + username,
             {
                 method: "GET",
@@ -69,7 +70,7 @@ const DialogForm = props => {
                 />
                 <SelectServerDropdown
                     selected={chatServer}
-                    chatServerUrlList={chatServerUrlList}
+                    chatServerPortsList={chatServerPortsList}
                     onChange={handleSelectServer}
                 />
             </DialogContent>
@@ -83,14 +84,14 @@ const DialogForm = props => {
 const JoinDialog = props => {
     const {state: chatState} = useContext(ChatContext);
 
-    if (!chatState.chatServerUrlList) {
+    if (!chatState.chatServerPortsList) {
         return <CircularProgress />;
     }
 
     return (
         <Dialog open TransitionComponent={Transition}>
             <DialogForm
-                chatServerUrlList={chatState.chatServerUrlList}
+                chatServerPortsList={chatState.chatServerPortsList}
                 {...props}
             />
         </Dialog>

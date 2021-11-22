@@ -29,8 +29,8 @@ public class DiscoveryController {
 
         List<String> results = instances
                 .stream()
-                .map(ServiceInstance::getUri)
-                .map(URI::getAuthority)
+                .map(ServiceInstance::getPort)
+                .map(String::valueOf)
                 .collect(Collectors.toList());
 
         results.forEach(System.out::println);

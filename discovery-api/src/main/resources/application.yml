@@ -3,6 +3,7 @@ server.port: 3002
 eureka:
   instance:
     appname: discovery-api
+    preferIpAddress: true
   client:
     fetchRegistry: true
     serviceUrl:

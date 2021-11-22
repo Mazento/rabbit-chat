@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useRef, useState } from "react";
 import { Stomp } from '@stomp/stompjs';
-import { getChatSocketEndpoint } from "const/socketEndpoints";
+import { getChatSocketEndpoint } from "utils/GetChatEndpoint";
 
 // const SOCKET_ENDPOINT = 'ws://localhost:3100/chat';
 // const SOCKET_ENDPOINT = process.env.CHAT_SOCKET_ENDPOINT || 'ws://localhost:8080/chat';
@@ -14,34 +14,23 @@ const STATE_KEYS = {
     isChatInitiated: "isChatInitiated",
     errors: "errors",
     pendingFileId: "pendingFileId",
-    chatServerUrlList: "chatServerUrlList",
-    chatServerCurrent: "chatServerCurrent",
+    chatServerPortsList: "chatServerPortsList",
+    chatServerCurrentPort: "chatServerCurrentPort",
 }
 
 export const ChatContext = createContext({});
 
 export const ChatContextProvider = props => {
     const initState = {
-        [STATE_KEYS.chatMessages]: [
-            {
-                username: "Obi Wan",
-                text: "Hello there!",
-                timestamp: 1634761606,
-            },
-            {
-                username: "General Grievous",
-                text: "General Kenobi",
-                timestamp: 1634764606,
-            },
-        ],
+        [STATE_KEYS.chatMessages]: [],
         [STATE_KEYS.usersList]: new Set(),
         [STATE_KEYS.isConnectionEstablished]: false,
         [STATE_KEYS.isChatInitiated]: false,
         [STATE_KEYS.errors]: {},
         [STATE_KEYS.pendingFileId]: null,
         [STATE_KEYS.pendingFileId]: null,
-        [STATE_KEYS.chatServerUrlList]: null,
-        [STATE_KEYS.chatServerCurrent]: null
+        [STATE_KEYS.chatServerPortsList]: null,
+        [STATE_KEYS.chatServerCurrentPort]: null
     };
 
     const actions = {
@@ -69,7 +58,7 @@ export const ChatContextProvider = props => {
             }
         ).then((res) => {
             res.json().then(list => {
-                updateState(STATE_KEYS.chatServerUrlList, list);
+                updateState(STATE_KEYS.chatServerPortsList, list);
             });
         });
     }
@@ -176,13 +165,13 @@ export const ChatContextProvider = props => {
     }
 
     const handleSetChatServer = chatServer => {
-        updateState(STATE_KEYS.chatServerCurrent, chatServer);
+        updateState(STATE_KEYS.chatServerCurrentPort, chatServer);
     }
 
     const handleConnectToWebSocket = () => {
-        const endpoint = getChatSocketEndpoint(state.chatServerCurrent);
+        const endpoint = getChatSocketEndpoint(state.chatServerCurrentPort);
 
-        console.log("Connecting to " + state.chatServerCurrent);
+        console.log("Connecting to " + endpoint);
 
         const socket = new WebSocket(endpoint);
         const client = Stomp.over(socket);

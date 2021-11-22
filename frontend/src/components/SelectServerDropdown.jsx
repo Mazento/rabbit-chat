@@ -20,17 +20,17 @@ const Label = styled(InputLabel)`
 `;
 
 const SelectServerDropdown = (props) => {
-    const {selected, chatServerUrlList, onChange} = props;
+    const {selected, chatServerPortsList, onChange} = props;
 
     return (
         <Wrapper>
-            <Label>Chat endpoint</Label>
+            <Label>Chat endpoint port</Label>
             <Select
                 value={selected}
                 variant="standard"
                 onChange={onChange}
             >
-                {chatServerUrlList.map(port => (
+                {chatServerPortsList.map(port => (
                     <MenuItem
                         key={port}
                         value={port}

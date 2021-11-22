@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --config ./webpack.config.js --mode development"
+    "start": "webpack-dev-server --config ./webpack.config.js --mode development",
+    "build": "webpack --mode production --config ./webpack.config.js --mode production"
   },
   "author": "",
   "license": "ISC",
@@ -23,7 +24,7 @@
     "@mui/styled-engine-sc": "^5.0.3",
     "@stomp/stompjs": "^6.1.2",
     "cnbuilder": "3.0.1",
-    "express": "4.17.1",
+    "express": "^4.17.1",
     "jss": "10.8.0",
     "lodash": "4.17.21",
     "node-sass": "6.0.1",

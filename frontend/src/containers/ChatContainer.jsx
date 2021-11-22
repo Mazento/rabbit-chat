@@ -77,7 +77,7 @@ const ChatContainer = () => {
     const {state: userState, actions: userActions} = useContext(UserContext);
     const {state: chatState, actions: chatActions} = useContext(ChatContext);
 
-    if (!userState.username || !chatState.chatServerCurrent) {
+    if (!userState.username || !chatState.chatServerCurrentPort) {
         return (
             <JoinDialog
                 onSetUsername={userActions.onSetUsername}
