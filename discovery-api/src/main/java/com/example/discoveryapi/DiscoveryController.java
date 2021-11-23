@@ -2,13 +2,10 @@ package com.example.discoveryapi;
 
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +19,10 @@ public class DiscoveryController {
         this.discoveryClient = discoveryClient;
     }
 
+    /**
+     *
+     * @return list of ports for all available instances of chat-signal-service
+     */
     @GetMapping("/chat")
     public List<String> getAllChatSignals() {
 

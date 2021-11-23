@@ -43,6 +43,12 @@ public class ChatUsersController {
         this.jmsService = jmsService;
     }
 
+
+    /**
+     * Checks if user with provided username already exists
+     * @param username name that should be checked for availability
+     * @return a {@code Map<String, Boolean>} with the key {@code usernameAvailable}
+     */
     @GetMapping("/checkUsername/{username}")
     @ResponseBody
     public Map<String, Boolean> checkUsernameAvailability(@PathVariable String username) {
@@ -53,6 +59,11 @@ public class ChatUsersController {
         return Collections.singletonMap("usernameAvailable", !userExists);
     }
 
+    /**
+     * Saves new user in the database and notifies all clients via RabbitMQ
+     * @param username name of the newly connected user
+     * @return list of all active users
+     */
     @MessageMapping("/getUsersList")
     @SendToUser("/queue/replyUsersList")
     public List<String> getUsersList(String username, SimpMessageHeaderAccessor headerAccessor) {
@@ -67,6 +78,9 @@ public class ChatUsersController {
         return chatUserService.findAllUsernames();
     }
 
+    /**
+     * Listener for clients disconnect event. Remove user from the database and send message to the RabbitMQ
+     */
     @EventListener
     public void onDisconnectEvent(SessionDisconnectEvent event) {
         log.debug("Client with session {} disconnected", event.getSessionId());
@@ -78,6 +92,10 @@ public class ChatUsersController {
         chatUserService.deleteBySessionId(event.getSessionId());
     }
 
+    /**
+     * Get user connect/disconnect event from the RabbitMQ and notify all connected clients.
+     * <p>This message was send from chat-signal-service.</p>
+     */
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(value = "", exclusive = "true", autoDelete = "true"),
             exchange = @Exchange(value = JmsService.EXCHANGE_USER_CONNECT_DISCONNECT, type = ExchangeTypes.TOPIC))

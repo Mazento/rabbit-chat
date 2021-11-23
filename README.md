@@ -46,6 +46,7 @@ List of services:
 | discovery-api | Provides api to get chat-signal-services' ports
 | mySQL | Persists chat messages, file records, connected users
 | rabbitMQ | Used for communication between file-service and chat-signal-service and between the latter's replicas
+| common | package for common POJOs between services
 
 ### RabbitMQ diagram:
 ![basic](assets/rabbitmq-diagram.png)

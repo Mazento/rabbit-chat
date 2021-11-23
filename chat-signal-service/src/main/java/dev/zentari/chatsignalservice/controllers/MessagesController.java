@@ -44,8 +44,12 @@ public class MessagesController {
         this.jmsService = jmsService;
     }
 
+    /**
+     * Accepts new message from the client. Persists in the database and sends this message to the message broker.
+     * @param message chat message from the client
+    */
     @MessageMapping("/message")
-    public ChatMessageDTO newMessage(ChatMessageDTO message) {
+    public void newMessage(ChatMessageDTO message) {
 
         log.debug("New message: " + message.getText());
 
@@ -58,16 +62,24 @@ public class MessagesController {
         ChatMessage savedChatMessage = chatMessageService.save(chatMessage);
 
         jmsService.sendChatMessage(ChatMessageDTO.toDTO(savedChatMessage));
-
-        return ChatMessageDTO.toDTO(savedChatMessage);
     }
 
+    /**
+     * Requested during initial client's connection
+     * @return list of all saved chat messages
+     */
     @MessageMapping("/getChatHistory")
     @SendToUser("/queue/replyChatHistory")
     public List<ChatMessageDTO> getChatHistory() {
         return chatMessageService.findAllRelevant();
     }
 
+    /**
+     * Accepts new message with attached file from the client and persist in the database. Attached file only contains
+     * the information about the file. File itself is not passed here.
+     * @param message chat message from the client
+     * @return id of the attached file
+     */
     @MessageMapping("/fileMessage")
     @SendToUser("/queue/replyFileMessage")
     public Integer newFileMessage(ChatMessageDTO message) {
@@ -95,6 +107,10 @@ public class MessagesController {
         return savedChatMessage.getFileRecord().getId();
     }
 
+    /**
+     * Get new chat message from the RabbitMQ and send it to all connected clients.
+     * <p>This message was send from chat-signal-service.</p>
+     */
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(value = "", exclusive = "true", autoDelete = "true"),
             exchange = @Exchange(value = JmsService.EXCHANGE_CHAT_MESSAGE, type = ExchangeTypes.TOPIC))
@@ -104,14 +120,11 @@ public class MessagesController {
         simpMessagingTemplate.convertAndSend("/queue/message", message);
     }
 
-    @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(value = "", exclusive = "true", autoDelete = "true"),
-            exchange = @Exchange(value = JmsService.EXCHANGE_FILE_ATTACHMENT_INTERNAL, type = ExchangeTypes.TOPIC))
-    )
-    public void onFileStatusUpdate(ChatMessageDTO message) {
-        simpMessagingTemplate.convertAndSend("/queue/fileStatusUpdate", message);
-    }
-
+    /**
+     * Get file status update from the RabbitMQ queue. After being processed send message to the RabbitMQ
+     * to all chat-signal-services.
+     * <p>This message was send from file-service.</p>
+     */
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(value = JmsService.QUEUE_FILE_ATTACHMENT, durable = "false"),
             exchange = @Exchange(value = JmsService.EXCHANGE_FILE_ATTACHMENT, type = ExchangeTypes.TOPIC))
@@ -128,5 +141,17 @@ public class MessagesController {
         ChatMessageDTO chatMessageDTO = chatMessageService.findByFileRecordId(fileRecord.getId());
 
         jmsService.sendFileStatusUpdate(chatMessageDTO);
+    }
+
+    /**
+     * Get file status update from the RabbitMQ and send it to all connected clients.
+     * <p>This message was send from chat-signal-service.</p>
+     */
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue(value = "", exclusive = "true", autoDelete = "true"),
+            exchange = @Exchange(value = JmsService.EXCHANGE_FILE_ATTACHMENT_INTERNAL, type = ExchangeTypes.TOPIC))
+    )
+    public void onFileStatusUpdate(ChatMessageDTO message) {
+        simpMessagingTemplate.convertAndSend("/queue/fileStatusUpdate", message);
     }
 }

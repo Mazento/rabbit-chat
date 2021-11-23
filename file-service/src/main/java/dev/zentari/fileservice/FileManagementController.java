@@ -19,6 +19,12 @@ public class FileManagementController {
         this.storageService = storageService;
     }
 
+    /**
+     * Accept and store a file
+     * @param file file to be stored
+     * @param fileId id that identifies this file in the database
+     * @return HTTP/1.1 200 OK
+     */
     @PostMapping("/upload")
     public ResponseEntity uploadFile(@RequestParam("file") MultipartFile file,
                                      @RequestParam("fileId") Integer fileId) {
@@ -28,6 +34,12 @@ public class FileManagementController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Download stored file
+     * @param filename file to be downloaded
+     * @param original original name of the file
+     * @return file as HTTP body attachment
+     */
     @GetMapping("/download/{filename:.+}")
     @ResponseBody
     public ResponseEntity<Resource> downloadFile(@PathVariable String filename, @RequestParam String original) {
