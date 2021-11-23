@@ -1,11 +1,6 @@
 import React, { createContext, useEffect, useRef, useState } from "react";
 import { Stomp } from '@stomp/stompjs';
-import { getChatSocketEndpoint } from "utils/GetChatEndpoint";
-
-// const SOCKET_ENDPOINT = 'ws://localhost:3100/chat';
-// const SOCKET_ENDPOINT = process.env.CHAT_SOCKET_ENDPOINT || 'ws://localhost:8080/chat';
-
-const DISCOVERY_API_URL = "http://192.168.0.100:3002";
+import { getChatSocketUrl, getDiscoveryApiUrl } from "utils/Network";
 
 const STATE_KEYS = {
     chatMessages: "chatMessages",
@@ -50,9 +45,7 @@ export const ChatContextProvider = props => {
     }
 
     const getChatServers = () => {
-        console.log("getChatServers");
-
-        fetch(DISCOVERY_API_URL + "/api/chat",
+        fetch(getDiscoveryApiUrl() + "/chat",
             {
                 method: "GET"
             }
@@ -109,8 +102,6 @@ export const ChatContextProvider = props => {
         if (!data?.body)
             return;
 
-        console.log(JSON.parse(data.body))
-
         setState(prevState => ({
             ...prevState,
             [STATE_KEYS.chatMessages]: JSON.parse(data.body),
@@ -121,8 +112,6 @@ export const ChatContextProvider = props => {
     const handlePopulateUsersList = data => {
         if (!data?.body)
             return;
-
-        console.log(JSON.parse(data.body))
 
         setState(prevState => ({
             ...prevState,
@@ -158,7 +147,6 @@ export const ChatContextProvider = props => {
 
         if (isUpdate) {
             updateState(STATE_KEYS.chatMessages, chatMessages);
-            console.log(chatMessage);
         } else {
             handleReceiveMessage(message);
         }
@@ -169,7 +157,7 @@ export const ChatContextProvider = props => {
     }
 
     const handleConnectToWebSocket = () => {
-        const endpoint = getChatSocketEndpoint(state.chatServerCurrentPort);
+        const endpoint = getChatSocketUrl(state.chatServerCurrentPort);
 
         console.log("Connecting to " + endpoint);
 

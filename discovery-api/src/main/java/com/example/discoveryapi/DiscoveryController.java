@@ -25,7 +25,7 @@ public class DiscoveryController {
     @GetMapping("/chat")
     public List<String> getAllChatNodes() {
 
-        List<ServiceInstance> instances = discoveryClient.getInstances("chat-node-service");
+        List<ServiceInstance> instances = discoveryClient.getInstances("chat-signal-service");
 
         List<String> results = instances
                 .stream()

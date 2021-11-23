@@ -1,5 +1,11 @@
 version: '3.8'
 
+x-chat-signal-env: &chat-signal-env
+  SPRING_RABBITMQ_HOST: rabbitmq
+  SPRING_RABBITMQ_PORT: 5672
+  SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/rabbit_chat
+  EUREKA_URL: http://eureka:8761/eureka
+
 services:
   rabbitmq:
     image: rabbitmq:3-management
@@ -33,21 +39,33 @@ services:
       SPRING_RABBITMQ_PORT: 5672
     links:
       - rabbitmq
+    volumes:
+      - ./uploads-storage:/uploads-storage
 
-  chat-node-service:
-    build: ../chat-node-service
+  chat-signal-service00:
+    build: ../chat-signal-service
     ports:
-      - '3100-3200:3100-3200'
+      - '3100:3100'
     environment:
+      <<: *chat-signal-env
       SERVER_PORT: 3100
-      SPRING_RABBITMQ_HOST: rabbitmq
-      SPRING_RABBITMQ_PORT: 5672
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/rabbit_chat
-      EUREKA_URL: http://eureka:8761/eureka
     links:
       - rabbitmq
       - mysql
       - eureka
+
+  chat-signal-service01:
+    build: ../chat-signal-service
+    ports:
+      - '3101:3101'
+    environment:
+      <<: *chat-signal-env
+      SERVER_PORT: 3101
+    links:
+      - rabbitmq
+      - mysql
+      - eureka
+
 
   eureka:
     build: ../discovery-server

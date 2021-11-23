@@ -36,3 +36,4 @@ build/
 /frontend/node_modules/
 /uploads-storage/
 /deploy/.mysql-data/
+/deploy/uploads-storage/

@@ -5,8 +5,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import CircularProgressCustom from "components/CircularProgressCustom";
 import formatBytes from "utils/FormatBytes";
 import { FILE_STATUS } from "const/fileStatus";
-
-const FILE_SERVER_URL = "http://localhost:3001";
+import { getFileServerUrl } from "utils/Network";
 
 const Container = styled.div`
     margin-top: 0.5rem;
@@ -78,7 +77,7 @@ const AttachedFile = props => {
                     ? <DownloadLink
                         target="_blank"
                         download={file.filename}
-                        href={FILE_SERVER_URL + "/download/" + file.url + "?original=" + file.filename}
+                        href={getFileServerUrl() + "/download/" + file.url + "?original=" + file.filename}
                     >
                         <FileDownloadIcon
                             htmlColor={isCurrentUser ? "#4e88e8" : "#fff"}

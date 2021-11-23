@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>dev.zentari</groupId>
-    <artifactId>chat-node-service</artifactId>
+    <artifactId>chat-signal-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>chat-node-service</name>
-    <description>chat-node-service</description>
+    <name>chat-signal-service</name>
+    <description>chat-signal-service</description>
     <properties>
         <java.version>11</java.version>
         <spring-cloud.version>2021.0.0-RC1</spring-cloud.version>

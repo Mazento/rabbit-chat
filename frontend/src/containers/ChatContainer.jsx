@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Skeleton } from "@mui/material";
 
 import { UserContext } from "contexts/UserContext";
-import { ChatContext, ChatContextProvider } from "contexts/ChatContext";
+import { ChatContext } from "contexts/ChatContext";
 import ChatSendMessageContainer from "containers/ChatSendMessageContainer";
 import MessagesListContainer from "containers/MessagesListContainer";
 import UsersListContainer from "containers/UsersListContainer";

@@ -10,7 +10,7 @@ import { CircularProgress, Slide } from "@mui/material";
 
 import SelectServerDropdown from "components/SelectServerDropdown";
 import { ChatContext } from "contexts/ChatContext";
-import { getChatApiEndpoint } from "utils/GetChatEndpoint";
+import { getChatApiUrl } from "utils/Network";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -35,8 +35,7 @@ const DialogForm = props => {
         if (!username || !chatServer)
             return;
 
-        const chatServerUrl = getChatApiEndpoint(chatServerPortsList[0]);
-        console.log(chatServerUrl);
+        const chatServerUrl = getChatApiUrl(chatServerPortsList[0]);
         fetch(chatServerUrl + "/checkUsername/" + username,
             {
                 method: "GET",

@@ -8,10 +8,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { ChatContext } from "contexts/ChatContext";
 import { UserContext } from "contexts/UserContext";
 import ChatFileUpload from "components/ChatFileUpload";
-
-// TODO check docker env
-const FILE_SERVER_URL = "http://localhost:3001";
-// const FILE_SERVER_URL = process.env.FILE_SERVER_URL || "http://localhost:3001";
+import { getFileServerUrl } from "utils/Network";
 
 const Container = styled.div`
     width: 100%;
@@ -124,7 +121,7 @@ const ChatSendMessageContainer = () => {
             formData.append("file", file);
             formData.append("fileId", chatState.pendingFileId);
 
-            fetch(FILE_SERVER_URL + "/upload",
+            fetch(getFileServerUrl() + "/upload",
                 {
                     mode: 'no-cors',
                     method: "POST",
