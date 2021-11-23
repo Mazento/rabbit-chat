@@ -23,18 +23,14 @@ public class DiscoveryController {
     }
 
     @GetMapping("/chat")
-    public List<String> getAllChatNodes() {
+    public List<String> getAllChatSignals() {
 
         List<ServiceInstance> instances = discoveryClient.getInstances("chat-signal-service");
 
-        List<String> results = instances
+        return instances
                 .stream()
                 .map(ServiceInstance::getPort)
                 .map(String::valueOf)
                 .collect(Collectors.toList());
-
-        results.forEach(System.out::println);
-
-        return results;
     }
 }

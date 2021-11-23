@@ -6,4 +6,3 @@ mvn deploy:deploy-file \
 	-Dversion=0.0.1-SNAPSHOT \
 	-Durl=file:./local-maven-repo/ \
 	-DrepositoryId=local-maven-repo
-$SHELL

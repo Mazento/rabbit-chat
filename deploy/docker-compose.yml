@@ -66,14 +66,15 @@ services:
       - mysql
       - eureka
 
-
   eureka:
     build: ../discovery-server
+    restart: always
     ports:
       - '8761:8761'
 
   discovery-api:
     build: ../discovery-api
+    restart: always
     ports:
       - '3002:3002'
     environment:
@@ -83,5 +84,6 @@ services:
 
   frontend:
     build: ../frontend
+    restart: always
     ports:
       - '3000:3000'

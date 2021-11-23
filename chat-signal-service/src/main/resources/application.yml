@@ -27,4 +27,4 @@ eureka:
 
 logging:
   level:
-    dev.zentari.chatnodeservice: debug
+    dev.zentari.chatsignalservice: debug
