@@ -15,19 +15,17 @@ services:
       - "15672:15672"
 
   mysql:
-      image: mysql:5.7
-      restart: always
-      ports:
-        - '3306:3306'
-      expose:
-        - '3306'
-      volumes:
-        - "./.mysql-data/rabbit_chat:/var/lib/mysql"
-      environment:
-        MYSQL_DATABASE: 'rabbit_chat'
-        MYSQL_USER: 'rchat_user'
-        MYSQL_PASSWORD: 'password'
-        MYSQL_ROOT_PASSWORD: 'password'
+    image: mysql:5.7
+    restart: always
+    ports:
+      - '3306:3306'
+    volumes:
+      - "./.mysql-data/rabbit_chat:/var/lib/mysql"
+    environment:
+      MYSQL_DATABASE: 'rabbit_chat'
+      MYSQL_USER: 'rchat_user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
 
   file-service:
     build: ../file-service
