@@ -3,8 +3,8 @@ spring:
     name: chat-signal-service
   datasource:
     url: jdbc:mysql://localhost:3306/rabbit_chat
-    username: rchat_user
-    password: password
+    username: ${MYSQL_USER:rchat_user}
+    password: ${MYSQL_PASSWORD:password}
     driverClassName: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:

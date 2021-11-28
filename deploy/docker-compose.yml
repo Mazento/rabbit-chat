@@ -6,6 +6,10 @@ x-chat-signal-env: &chat-signal-env
   SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/rabbit_chat
   EUREKA_URL: http://eureka:8761/eureka
 
+x-mysql-credentials: &mysql-credentials
+  MYSQL_USER: 'rchat_user'
+  MYSQL_PASSWORD: 'password'
+
 services:
   rabbitmq:
     image: rabbitmq:3-management
@@ -22,9 +26,8 @@ services:
     volumes:
       - "./.mysql-data/rabbit_chat:/var/lib/mysql"
     environment:
+      <<: *mysql-credentials
       MYSQL_DATABASE: 'rabbit_chat'
-      MYSQL_USER: 'rchat_user'
-      MYSQL_PASSWORD: 'password'
       MYSQL_ROOT_PASSWORD: 'password'
 
   file-service:
@@ -35,8 +38,6 @@ services:
     environment:
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
-    links:
-      - rabbitmq
     volumes:
       - ./uploads-storage:/uploads-storage
 
@@ -46,11 +47,8 @@ services:
       - '3100:3100'
     environment:
       <<: *chat-signal-env
+      <<: *mysql-credentials
       SERVER_PORT: 3100
-    links:
-      - rabbitmq
-      - mysql
-      - eureka
 
   chat-signal-service01:
     build: ../chat-signal-service
@@ -58,11 +56,8 @@ services:
       - '3101:3101'
     environment:
       <<: *chat-signal-env
+      <<: *mysql-credentials
       SERVER_PORT: 3101
-    links:
-      - rabbitmq
-      - mysql
-      - eureka
 
   eureka:
     build: ../discovery-server
@@ -77,8 +72,6 @@ services:
       - '3002:3002'
     environment:
       EUREKA_URL: http://eureka:8761/eureka
-    links:
-      - eureka
 
   frontend:
     build: ../frontend

@@ -43,7 +43,6 @@ public class ChatUsersController {
         this.jmsService = jmsService;
     }
 
-
     /**
      * Checks if user with provided username already exists
      * @param username name that should be checked for availability
@@ -83,6 +82,7 @@ public class ChatUsersController {
      */
     @EventListener
     public void onDisconnectEvent(SessionDisconnectEvent event) {
+
         log.debug("Client with session {} disconnected", event.getSessionId());
 
         ChatUser chatUser = chatUserService.findBySessionId(event.getSessionId());
